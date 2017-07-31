@@ -5,6 +5,7 @@ const UploadController = require('../controllers/upload_controller');
 const PermController = require('../controllers/perm_controller');
 const CitiesController = require('../controllers/cities_controller');
 const StudentsController = require('../controllers/student_controller');
+const TeachersController = require('../controllers/teacher_controller');
 var {authenticate} = require('../middleware/authenticate');
 module.exports = (app) => {
 
@@ -46,6 +47,12 @@ module.exports = (app) => {
   app.post('/students', authenticate, StudentsController.add),
   app.get('/students/:id', authenticate, StudentsController.getById),
   app.delete('/students/:id', authenticate, StudentsController.delete),
-  app.patch('/students/:id', authenticate, StudentsController.patch)
+  app.patch('/students/:id', authenticate, StudentsController.patch),
+
+  //teachers
+  app.post('/teachers', authenticate, TeachersController.add),
+  app.get('/teachers/:id', authenticate, TeachersController.getById),
+  app.delete('/teachers/:id', authenticate, TeachersController.delete),
+  app.patch('/teachers/:id', authenticate, TeachersController.patch)
 
 };
