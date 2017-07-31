@@ -32,47 +32,32 @@ getById(req, res){
 },
 
 getMaxStudentTeacher(req, res){
-
-  Course.find()
-  .populate('teacher')
-  .then((courses) => {
-
-
-    var teachers = [];
-    var current_max = null;
-    var updateTeachersCount = (temp_teacher, count) => {
-      var wasFound = false;
-      teachers.forEach((teacher) => {
-        if (teacher.current_teacher._id === temp_teacher._id){
-            teacher.count = teacher.count + count;
-            wasFound = true;
-            if ((!current_max) || teacher.count > current_max.count){
-              current_max = teacher;
-            }
-        }
-      })
-      if (!wasFound){
-        var teacherNew = {
-          current_teacher: temp_teacher,
-          count
-        }
-        teachers.push(teacherNew)
-
-        if ((!current_max) || teacherNew.count > current_max.count){
-          current_max = teacherNew;
-        }
+  var numberOfStudents;
+  Course.aggregate(
+   {$group: { _id:'$teacher',  number_of_students: {$sum: {$size: '$students'}}}})
+   .sort({ number_of_students: -1 })
+   .limit(1)
+   .then((teachers) => {
+      if (!teachers){
+        res.send({});
       }
-    }
-
-    courses.forEach((course) => {
-      updateTeachersCount(course.teacher, course.students.length);
+      numberOfStudents = teachers[0].number_of_students;
+      return Teacher.findById(teachers[0]._id);
     })
+    .then((result) => {
+      res.send({
+        id: result.id,
+        first_name: result.first_name,
+        last_name: result.last_name,
+        email: result.email,
+        number_of_students: numberOfStudents
+      });
+    })
+    .catch((e) => {
+      console.log(e);
+      res.status(400).send(e);
+    });
 
-    res.send(current_max);
-  }).catch((e) => {
-    console.log(e);
-    res.status(400).send(e);
-  });
 },
 
 delete(req, res){
