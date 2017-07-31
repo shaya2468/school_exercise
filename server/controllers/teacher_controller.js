@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const {Teacher} = require('../models/teacher');
+const {Course} = require('../models/course');
 const {ObjectID} = require('mongodb');
 module.exports = {
 
@@ -26,6 +27,50 @@ getById(req, res){
   .then((teacher) => {
     res.send(teacher);
   }).catch((e) => {
+    res.status(400).send(e);
+  });
+},
+
+getMaxStudentTeacher(req, res){
+
+  Course.find()
+  .populate('teacher')
+  .then((courses) => {
+
+
+    var teachers = [];
+    var current_max = null;
+    var updateTeachersCount = (temp_teacher, count) => {
+      var wasFound = false;
+      teachers.forEach((teacher) => {
+        if (teacher.current_teacher._id === temp_teacher._id){
+            teacher.count = teacher.count + count;
+            wasFound = true;
+            if ((!current_max) || teacher.count > current_max.count){
+              current_max = teacher;
+            }
+        }
+      })
+      if (!wasFound){
+        var teacherNew = {
+          current_teacher: temp_teacher,
+          count
+        }
+        teachers.push(teacherNew)
+
+        if ((!current_max) || teacherNew.count > current_max.count){
+          current_max = teacherNew;
+        }
+      }
+    }
+
+    courses.forEach((course) => {
+      updateTeachersCount(course.teacher, course.students.length);
+    })
+
+    res.send(current_max);
+  }).catch((e) => {
+    console.log(e);
     res.status(400).send(e);
   });
 },

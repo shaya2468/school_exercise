@@ -69,6 +69,9 @@ module.exports = (app) => {
   //grades
   app.post('/grades', authenticate, GradesController.add),
   app.delete('/grades', authenticate, GradesController.delete),
-  app.get('/grades/:id', authenticate, GradesController.getById)
+  app.get('/grades/:id', authenticate, GradesController.getById),
 
+
+  //queries
+  app.get('/teachers_max/', authenticate, TeachersController.getMaxStudentTeacher)
 };
