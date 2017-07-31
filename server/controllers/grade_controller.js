@@ -61,11 +61,12 @@ module.exports = {
  },
  getMaxAverage(req, res){
 
-
    Grade.aggregate([
         {$group: {_id:
           '$student', average: {$avg: '$grade'}}}
     ])
+    .sort({ average: -1 })
+    .limit(1)
     .then((grades) => {
       res.send(grades);
     }).catch((e) => {
