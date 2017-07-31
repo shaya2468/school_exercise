@@ -59,5 +59,18 @@ module.exports = {
      res.status(400).send();
    });
  },
+ getMaxAverage(req, res){
+
+
+   Grade.aggregate([
+        {$group: {_id:
+          '$student', average: {$avg: '$grade'}}}
+    ])
+    .then((grades) => {
+      res.send(grades);
+    }).catch((e) => {
+      res.status(400).send(e);
+    });
+ }
 
 };

@@ -43,5 +43,6 @@ module.exports = (app) => {
 
 
   //queries
-  app.get('/teachers_max/', authenticate, TeachersController.getMaxStudentTeacher)
+  app.get('/teachers_max/', authenticate, TeachersController.getMaxStudentTeacher),
+  app.get('/max_average', authenticate, GradesController.getMaxAverage)
 };
