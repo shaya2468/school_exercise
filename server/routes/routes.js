@@ -7,6 +7,9 @@ const CitiesController = require('../controllers/cities_controller');
 const StudentsController = require('../controllers/student_controller');
 const TeachersController = require('../controllers/teacher_controller');
 const CoursesController = require('../controllers/course_controller');
+const GradesController = require('../controllers/grade_controller');
+
+
 var {authenticate} = require('../middleware/authenticate');
 module.exports = (app) => {
 
@@ -61,6 +64,11 @@ module.exports = (app) => {
   app.patch('/courses/students/:id', authenticate, CoursesController.addStudent),
   app.get('/courses/:id', authenticate, CoursesController.getById),
   app.delete('/courses/:id', authenticate, CoursesController.delete),
-  app.patch('/courses/:id', authenticate, CoursesController.patch)
+  app.patch('/courses/:id', authenticate, CoursesController.patch),
+
+  //grades
+  app.post('/grades', authenticate, GradesController.add),
+  app.delete('/grades', authenticate, GradesController.delete),
+  app.get('/grades/:id', authenticate, GradesController.getById)
 
 };
