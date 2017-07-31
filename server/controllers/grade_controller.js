@@ -1,5 +1,7 @@
 const _ = require('lodash');
 const {Grade} = require('../models/grade');
+const {Course} = require('../models/course');
+const {Student} = require('../models/student');
 const {ObjectID} = require('mongodb');
 module.exports = {
 
@@ -60,16 +62,60 @@ module.exports = {
    });
  },
  getMaxAverage(req, res){
-
-   Grade.aggregate([
+   var topAverage;
+   Grade.aggregate(
         {$group: {_id:
           '$student', average: {$avg: '$grade'}}}
-    ])
+    )
     .sort({ average: -1 })
     .limit(1)
-    .then((grades) => {
-      res.send(grades);
-    }).catch((e) => {
+
+    .then((result) => {
+      if (!res){
+        res.send({});
+      }
+      topAverage = result[0].average;
+      return Student.findById(result[0]._id);
+    })
+    .then((result) => {
+      res.send({
+        id: result._id,
+        email: result.email,
+        first_name: result.first_name,
+        last_name: result.last_name,
+        average: topAverage
+      });
+    })
+    .catch((e) => {
+      res.status(400).send(e);
+    });
+ },
+
+ easiestCourse(req, res){
+
+   var topAverage;
+   Grade.aggregate(
+        {$group: {_id:
+          '$course', average: {$avg: '$grade'}}}
+    )
+    .sort({ average: -1 })
+    .limit(1)
+
+    .then((result) => {
+      if (!res){
+        res.send({});
+      }
+      topAverage = result[0].average;
+      return Course.findById(result[0]._id);
+    })
+    .then((result) => {
+      res.send({
+        id: result._id,
+        name: result.name,
+        average: topAverage
+      });
+    })
+    .catch((e) => {
       res.status(400).send(e);
     });
  }
