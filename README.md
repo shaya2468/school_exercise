@@ -8,7 +8,7 @@
   - mv server/config/_config.json server/config/config.json
   - npm i
   - npm start
-### Run example
+### Run Client example
   - cd client/
   - node playground.js 
 
