@@ -1,5 +1,5 @@
 
-### Prequisites
+### prerequisites
   - npm
   - mongodb
 ### Setup
